@@ -1,0 +1,169 @@
+-- Credit Available By Mapping
+CREATE TABLE credit_available_by_mapping (
+    id INT PRIMARY KEY,
+    description VARCHAR(50)
+);
+
+INSERT INTO credit_available_by_mapping VALUES 
+(1, 'Payment'),
+(2, 'Negotiation'),
+(3, 'Acceptance'),
+(4, 'Deferred Payment');
+
+-- Usance of Drafts Mapping
+CREATE TABLE usance_of_drafts_mapping (
+    id INT PRIMARY KEY,
+    description VARCHAR(50)
+);
+
+INSERT INTO usance_of_drafts_mapping VALUES 
+(1, 'At Sight'),
+(2, 'Specify');
+
+-- Partial Shipments Mapping
+CREATE TABLE partial_shipments_mapping (
+    id INT PRIMARY KEY,
+    description VARCHAR(50)
+);
+
+INSERT INTO partial_shipments_mapping VALUES 
+(1, 'Permitted'),
+(2, 'Prohibited'),
+(3, 'Transhipment');
+
+-- Port of Discharge Mapping
+CREATE TABLE port_of_discharge_mapping (
+    id INT PRIMARY KEY,
+    description VARCHAR(50)
+);
+
+INSERT INTO port_of_discharge_mapping VALUES 
+(1, 'Nhavasheva, India'),
+(2, 'Chennai, India'),
+(3, 'Hyderabad Airport, India');
+
+
+
+-- General Information Table (Updated)
+CREATE TABLE general_information (
+    letter_of_credit_number VARCHAR(50) PRIMARY KEY,
+    sequence_of_total VARCHAR(50),
+    type_of_lc VARCHAR(50), -- [Irrevocable, Irrevocable & Transferable]
+    date_of_issue DATE,
+    applicable_rules VARCHAR(50), -- e.g., UCP
+    date_of_expiry DATE,
+    place_of_expiry VARCHAR(100),
+    name_of_applicant VARCHAR(255),
+    name_of_beneficiary VARCHAR(255),
+    currency_amount VARCHAR(50),
+    variations_in_lc_amount VARCHAR(255),
+    credit_available_with VARCHAR(255),
+    name_and_address_of_the_bank VARCHAR(255),
+    credit_available_by INT, -- Foreign key to credit_available_by_mapping
+    usance_of_drafts INT,    -- Foreign key to usance_of_drafts_mapping
+    drafts_to_be_drawn_on VARCHAR(255),
+    deferred_payment VARCHAR(50),
+    partial_shipments INT,   -- Foreign key to partial_shipments_mapping
+    transhipment VARCHAR(50),
+    shipments_from VARCHAR(255),
+    port_of_loading VARCHAR(255),
+    port_of_discharge INT,   -- Foreign key to port_of_discharge_mapping
+    place_of_final_destination VARCHAR(255),
+    latest_shipment_date DATE,
+    reimbursing_bank VARCHAR(255),
+    charges VARCHAR(255),
+    period_of_presentation VARCHAR(255),
+    confirmation_instructions VARCHAR(255),
+    instructions_to_paying_accepting_negotiating_bank VARCHAR(255),
+    FOREIGN KEY (credit_available_by) REFERENCES credit_available_by_mapping(id),
+    FOREIGN KEY (usance_of_drafts) REFERENCES usance_of_drafts_mapping(id),
+    FOREIGN KEY (partial_shipments) REFERENCES partial_shipments_mapping(id),
+    FOREIGN KEY (port_of_discharge) REFERENCES port_of_discharge_mapping(id)
+);
+
+
+-- Create description_of_goods table
+CREATE TABLE description_of_goods (
+    letter_of_credit_number VARCHAR(50),
+    description_of_materials VARCHAR(255),
+    size_in_mm VARCHAR(50),
+    specification VARCHAR(255),
+    tolerance VARCHAR(50),
+    quantity INT,
+    quantity_tolerance VARCHAR(50),
+    price_per_mt_usd DECIMAL(10, 2),
+    PRIMARY KEY (letter_of_credit_number),
+    FOREIGN KEY (letter_of_credit_number) REFERENCES general_information(letter_of_credit_number)
+);
+
+-- Create documents_required table
+CREATE TABLE documents_required (
+    letter_of_credit_number VARCHAR(50),
+    beneficiary_draft TINYINT(1),                 -- 0 (No), 1 (Yes)
+    beneficiary_tax_invoice TINYINT(1),          -- 0 (No), 1 (Yes)
+    copy_of_railway_receipt TINYINT(1),          -- 0 (No), 1 (Yes)
+    certificate_of_origin TINYINT(1),            -- 0 (No), 1 (Yes)
+    copy_of_lut TINYINT(1),                      -- 0 (No), 1 (Yes)
+    beneficiary_packing_list TINYINT(1),         -- 0 (No), 1 (Yes)
+    PRIMARY KEY (letter_of_credit_number),
+    FOREIGN KEY (letter_of_credit_number) REFERENCES general_information(letter_of_credit_number)
+);
+
+-- Create additional_documents table
+CREATE TABLE additional_documents (
+    letter_of_credit_number VARCHAR(50),
+    transit_insurance_by_opener TINYINT(1),               -- 0 or 1
+    transportation_costs_by_opener TINYINT(1),            -- 0 or 1
+    lorry_receipt_mismatch TINYINT(1),                    -- 0 or 1
+    spelling_typographical_errors TINYINT(1),             -- 0 or 1
+    railway_freight_borne_by_applicant TINYINT(1),        -- 0 or 1
+    amendment_without_consent_invalid TINYINT(1),         -- 0 or 1
+    tt_reimbursement_allowed TINYINT(1),                  -- 0 or 1
+    PRIMARY KEY (letter_of_credit_number),
+    FOREIGN KEY (letter_of_credit_number) REFERENCES general_information(letter_of_credit_number)
+);
+
+
+-- Insert updated values into general_information table
+INSERT INTO general_information (
+    letter_of_credit_number, sequence_of_total, type_of_lc, date_of_issue, applicable_rules, 
+    date_of_expiry, place_of_expiry, name_of_applicant, name_of_beneficiary, currency_amount, 
+    variations_in_lc_amount, credit_available_with, name_and_address_of_the_bank, credit_available_by, 
+    usance_of_drafts, drafts_to_be_drawn_on, deferred_payment, partial_shipments, transhipment, 
+    shipments_from, port_of_loading, port_of_discharge, place_of_final_destination, latest_shipment_date,
+    reimbursing_bank, charges, period_of_presentation, confirmation_instructions, instructions_to_paying_accepting_negotiating_bank
+) VALUES (
+    'LC100001', '1/1', 'Irrevocable', '2025-01-01', 'UCP', '2025-12-31', 'Mumbai, India', 
+    'MISHRA DHATU NIGAM LIMITED', 'XYZ INDUSTRIES', 'USD 500,000', 'No Changes', '0% interest', 
+    'ABC BANK, Mumbai, India', 2, 1, 'Bank 1 / Bank 2', 'No', 1, 'Prohibited', 'Mumbai, India', 
+    'Nhavasheva, India', 3, 'Hyderabad, India', '2025-06-30',
+    'XYZ REIMBURSING BANK', 'Bank Charges are to be borne by the applicant', '30 days from the date of shipment', 
+    'Confirm the letter of credit if necessary', 'Instructions: Payment to be made to ABC Bank as per the terms.'
+);
+
+
+
+
+
+-- Insert values into description_of_goods table
+INSERT INTO description_of_goods 
+(letter_of_credit_number, description_of_materials, size_in_mm, specification, tolerance, 
+quantity, quantity_tolerance, price_per_mt_usd)
+VALUES 
+('LC100001', 'Steel Plates', '100x100', 'AISI 304', '±5%', 100, '±2%', 500);
+
+-- Insert values into documents_required table
+INSERT INTO documents_required 
+(letter_of_credit_number, beneficiary_draft, beneficiary_tax_invoice, copy_of_railway_receipt, 
+certificate_of_origin, copy_of_lut, beneficiary_packing_list)
+VALUES 
+('LC100001', 1, 1, 1, 1, 0, 1);
+
+
+-- Insert values into additional_documents table
+INSERT INTO additional_documents 
+(letter_of_credit_number, transit_insurance_by_opener, transportation_costs_by_opener, 
+lorry_receipt_mismatch, spelling_typographical_errors, railway_freight_borne_by_applicant, 
+amendment_without_consent_invalid, tt_reimbursement_allowed)
+VALUES 
+('LC100001', 1, 0, 1, 0, 1, 1, 1);
