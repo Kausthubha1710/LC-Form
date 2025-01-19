@@ -1,0 +1,148 @@
+Enter password: ***************
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 12
+Server version: 9.1.0 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show tables;
+ERROR 1046 (3D000): No database selected
+mysql> shoe database
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'shoe database' at line 1
+mysql>
+mysql> Use database lc_management;
+ERROR 1049 (42000): Unknown database 'database'
+mysql> Create database lc_management;
+ERROR 1007 (HY000): Can't create database 'lc_management'; database exists
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| lc_management      |
+| mydb               |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sys                |
+| world              |
++--------------------+
+8 rows in set (0.02 sec)
+
+mysql> select * from information_schema;
+ERROR 1046 (3D000): No database selected
+mysql> USE lc_management;
+Database changed
+mysql> select * from information_schema;
+ERROR 1146 (42S02): Table 'lc_management.information_schema' doesn't exist
+mysql> SELECT table_name
+    -> FROM information_schema.tables
+    -> WHERE table_schema = 'lc_management';
++-----------------------------+
+| TABLE_NAME                  |
++-----------------------------+
+| additional_documents        |
+| credit_available_by_mapping |
+| description_of_goods        |
+| documents_required          |
+| general_information         |
+| partial_shipments_mapping   |
+| port_of_discharge_mapping   |
+| usance_of_drafts_mapping    |
++-----------------------------+
+8 rows in set (0.01 sec)
+
+mysql> SELECT * FROM static_values;
+ERROR 1146 (42S02): Table 'lc_management.static_values' doesn't exist
+mysql> SELECT * FROM static_values
+    -> WHERE field_name LIKE '%Additional Conditions%';
+ERROR 1146 (42S02): Table 'lc_management.static_values' doesn't exist
+mysql> SELECT * FROM additional_documents;
++-------------------------+-----------------------------+--------------------------------+------------------------+-------------------------------+------------------------------------+-----------------------------------+--------------------------+
+| letter_of_credit_number | transit_insurance_by_opener | transportation_costs_by_opener | lorry_receipt_mismatch | spelling_typographical_errors | railway_freight_borne_by_applicant | amendment_without_consent_invalid | tt_reimbursement_allowed |
++-------------------------+-----------------------------+--------------------------------+------------------------+-------------------------------+------------------------------------+-----------------------------------+--------------------------+
+| LC100001                |                           1 |                              0 |                      1 |           0 |                                  1 |                                 1 |
+    1 |
++-------------------------+-----------------------------+--------------------------------+------------------------+-------------------------------+------------------------------------+-----------------------------------+--------------------------+
+1 row in set (0.10 sec)
+
+mysql> SELECT column1, column2 FROM <table_name>;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '<table_name>' at line 1
+mysql> SELECT document_name, document_description FROM additional_documents;
+ERROR 1054 (42S22): Unknown column 'document_name' in 'field list'
+mysql> SELECT * FROM credit_available_by_mapping;
++----+------------------+
+| id | description      |
++----+------------------+
+|  1 | Payment          |
+|  2 | Negotiation      |
+|  3 | Acceptance       |
+|  4 | Deferred Payment |
++----+------------------+
+4 rows in set (0.03 sec)
+
+mysql> SELECT * FROM description_of_goods;
++-------------------------+--------------------------+------------+---------------+-----------+----------+--------------------+------------------+
+| letter_of_credit_number | description_of_materials | size_in_mm | specification | tolerance | quantity | quantity_tolerance | price_per_mt_usd |
++-------------------------+--------------------------+------------+---------------+-----------+----------+--------------------+------------------+
+| LC100001                | Steel Plates             | 100x100    | AISI 304      | ±5%       |      100 | ±2%
+      |           500.00 |
++-------------------------+--------------------------+------------+---------------+-----------+----------+--------------------+------------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT * FROM documents_required;
++-------------------------+-------------------+-------------------------+-------------------------+-----------------------+-------------+--------------------------+
+| letter_of_credit_number | beneficiary_draft | beneficiary_tax_invoice | copy_of_railway_receipt | certificate_of_origin | copy_of_lut | beneficiary_packing_list |
++-------------------------+-------------------+-------------------------+-------------------------+-----------------------+-------------+--------------------------+
+| LC100001                |                 1 |                       1 |                       1 |
+1 |           0 |                        1 |
++-------------------------+-------------------+-------------------------+-------------------------+-----------------------+-------------+--------------------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT * FROM general_information;
++-------------------------+-------------------+-------------+---------------+------------------+----------------+-----------------+----------------------------+---------------------+-----------------+-------------------------+-----------------------+------------------------------+---------------------+------------------+-----------------------+------------------+-------------------+--------------+----------------+-------------------+-------------------+----------------------------+----------------------+----------------------+-----------------------------------------------+-----------------------------------+-------------------------------------------+----------------------------------------------------------------+
+| letter_of_credit_number | sequence_of_total | type_of_lc  | date_of_issue | applicable_rules | date_of_expiry | place_of_expiry | name_of_applicant          | name_of_beneficiary | currency_amount | variations_in_lc_amount | credit_available_with | name_and_address_of_the_bank | credit_available_by | usance_of_drafts | drafts_to_be_drawn_on | deferred_payment | partial_shipments | transhipment| shipments_from | port_of_loading   | port_of_discharge | place_of_final_destination | latest_shipment_date | reimbursing_bank     | charges                                       | period_of_presentation            | confirmation_instructions                 | instructions_to_paying_accepting_negotiating_bank
+    |
++-------------------------+-------------------+-------------+---------------+------------------+----------------+-----------------+----------------------------+---------------------+-----------------+-------------------------+-----------------------+------------------------------+---------------------+------------------+-----------------------+------------------+-------------------+--------------+----------------+-------------------+-------------------+----------------------------+----------------------+----------------------+-----------------------------------------------+-----------------------------------+-------------------------------------------+----------------------------------------------------------------+
+| LC100001                | 1/1               | Irrevocable | 2025-01-01    | UCP              | 2025-12-31     | Mumbai, India   | MISHRA DHATU NIGAM LIMITED | XYZ INDUSTRIES      | USD 500,000     | No Changes              | 0% interest           | ABC BANK, Mumbai, India      |                   2 |                1 | Bank 1 / Bank 2       | No
+    |                 1 | Prohibited   | Mumbai, India  | Nhavasheva, India |                 3 | Hyderabad, India           | 2025-06-30           | XYZ REIMBURSING BANK | Bank Charges are to be borne by the applicant | 30 days from the date of shipment | Confirm the letter of credit if necessary | Instructions: Payment to be made to ABC Bank as per the terms. |
++-------------------------+-------------------+-------------+---------------+------------------+----------------+-----------------+----------------------------+---------------------+-----------------+-------------------------+-----------------------+------------------------------+---------------------+------------------+-----------------------+------------------+-------------------+--------------+----------------+-------------------+-------------------+----------------------------+----------------------+----------------------+-----------------------------------------------+-----------------------------------+-------------------------------------------+----------------------------------------------------------------+
+1 row in set (0.02 sec)
+
+mysql> SELECT * FROM partial_shipments_mapping;
++----+--------------+
+| id | description  |
++----+--------------+
+|  1 | Permitted    |
+|  2 | Prohibited   |
+|  3 | Transhipment |
++----+--------------+
+3 rows in set (0.02 sec)
+
+mysql> SELECT * FROM port_of_discharge_mapping;
++----+--------------------------+
+| id | description              |
++----+--------------------------+
+|  1 | Nhavasheva, India        |
+|  2 | Chennai, India           |
+|  3 | Hyderabad Airport, India |
++----+--------------------------+
+3 rows in set (0.01 sec)
+
+mysql> SELECT * FROM usance_of_drafts_mapping;
++----+-------------+
+| id | description |
++----+-------------+
+|  1 | At Sight    |
+|  2 | Specify     |
++----+-------------+
+2 rows in set (0.02 sec)
+
+mysql>
